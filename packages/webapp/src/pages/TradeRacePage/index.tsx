@@ -39,12 +39,22 @@ const LayoutStyled = styled(Box)`
   }
 `;
 
+const ContentWrapperStyled = styled(Box)`
+  width: 80%;
+  max-width: 1152px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+`
+
 const TableWrapperStyled = styled(Box)`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 80%;
-  max-width: 1200px;
+  width: 100%;
+  min-width: 1024px;
+  // max-width: 1200px;
   min-height: 650px;
   background-color: var(--color-box);
   border-radius: 0.4rem;
@@ -53,8 +63,8 @@ const TableWrapperStyled = styled(Box)`
 `;
 
 const ProjectWrapperStyled = styled(Box)`
-  width: 80%;
-  max-width: 1200px;
+  width: 100%;
+  // max-width: 1200px;
 `;
 
 const SelectWrapperStyled = styled(Box)`
@@ -137,19 +147,26 @@ export const TradeRacePage = withTranslation("common")(
     return (
       <>
         {eventData ? (
-          <LayoutStyled marginY={4}>
+          <LayoutStyled marginY={9}>
+            <ContentWrapperStyled>
             <Typography
               marginY={1}
               component={"h1"}
               variant={"h1"}
+              fontSize={62}
+              lineHeight={'80px'}
               whiteSpace={"pre-line"}
-              textAlign={"center"}
+              textAlign={"left"}
+              // marginLeft={10}
+              // style={{ alignSelf: 'flex-start' }}
               dangerouslySetInnerHTML={{ __html: eventData.eventTitle }}
             />
 
             <Typography
               component={"h2"}
               variant={"h2"}
+              fontSize={62}
+              lineHeight={'80px'}
               whiteSpace={"pre-line"}
               textAlign={"center"}
               dangerouslySetInnerHTML={{ __html: eventData.subTitle }}
@@ -158,25 +175,26 @@ export const TradeRacePage = withTranslation("common")(
             <Typography
               marginTop={4}
               marginBottom={2}
-              variant={"h5"}
+              variant={"h3"}
+              lineHeight={'32px'}
               textAlign={"center"}
             >
               {eventData.duration.prev}
               <Typography
                 component={"time"}
                 paddingX={1}
-                variant={"h5"}
+                variant={"h3"}
                 dateTime={eventData.duration.startDate}
               >
                 {startDate}
               </Typography>
-              <Typography component={"span"} variant={"h5"}>
+              <Typography component={"span"} variant={"h3"}>
                 {eventData.duration.to}
               </Typography>
               <Typography
                 component={"time"}
                 paddingX={1}
-                variant={"h5"}
+                variant={"h3"}
                 dateTime={eventData.duration.endDate}
               >
                 {endDate}
@@ -261,6 +279,7 @@ export const TradeRacePage = withTranslation("common")(
                 ))}
               </ol>
             </ProjectWrapperStyled>
+            </ContentWrapperStyled>
           </LayoutStyled>
         ) : (
           <LoadingBlock />
