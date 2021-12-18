@@ -429,5 +429,6 @@ export default {
     labelTradeRaceYourRanking: 'Your ranking',
     labelTradeRaceGoTrading: 'Go trading',
     labelTradeRaceRewards:'Rewards',
-    labelTradeRaceRules:'Activity Rules'
- }
+    labelTradeRaceRules:'Activity Rules',
+    labelTradeRaceCountdown: 'Countdown to',
+}

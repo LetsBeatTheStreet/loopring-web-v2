@@ -84,10 +84,28 @@ const StyledTextFiled = styled(TextField)`
   }
 `;
 
+const TimeBoxStyled = styled(Box)`
+  font-size: 1.8rem;
+`
+
 export const TradeRacePage = withTranslation("common")(
   ({ t, i18n }: WithTranslation) => {
     const { search } = useLocation();
     const [currMarketPair, setCurrMarketPair] = React.useState("");
+    const [leftTime, setLeftTime] = React.useState<{
+      diff: number;
+      leftDays: string;
+      leftHours: string;
+      leftMinutes: string;
+      leftSeconds: string;
+    }>({
+      diff: 0,
+      leftDays: '00',
+      leftHours: '00',
+      leftMinutes: '00',
+      leftSeconds: '00',
+    })
+    const { diff, leftDays, leftHours, leftMinutes, leftSeconds } = leftTime
     const theme = useTheme();
     const { ammActivityMap } = useAmmPool();
     const {
@@ -139,11 +157,47 @@ export const TradeRacePage = withTranslation("common")(
       }
     }, [getAmmGameRank, getAmmGameUserRank, search]);
     const startDate = eventData
-      ? moment.utc(eventData?.duration.startDate).format(`YYYY-MM-DD HH:mm:ss`)
+      ? moment.utc(eventData?.duration.startDate).format(`YYYY/MM/DD HH:mm`)
       : "";
     const endDate = eventData
-      ? moment.utc(eventData?.duration.endDate).format(`YYYY-MM-DD HH:mm:ss`)
+      ? moment.utc(eventData?.duration.endDate).format(`YYYY/MM/DD HH:mm`)
       : "";
+
+    const updateLeftTime = React.useCallback(() => {
+      const diff = (moment.utc('2021-12-30 00:00:00') as any) - (moment().utc() as any)
+      const leftDaysNumber = Math.floor(
+        diff / (24 * 3600 * 1000)
+      )
+      const leftDays = leftDaysNumber > 9 ? String(leftDaysNumber) : `0${leftDaysNumber}`
+      const msHours = diff % (24 * 3600 * 1000)
+      const leftHoursNumber = Math.floor(
+        msHours / (3600 * 1000)
+      )
+      const leftHours = leftHoursNumber > 9 ? String(leftHoursNumber) : `0${leftHoursNumber}`
+      const msMinutes = msHours % (3600 * 1000)
+      const leftMinutesNumber = Math.floor(
+        msMinutes / (60 * 1000)
+      ) 
+      const leftMinutes = leftMinutesNumber > 9 ? String(leftMinutesNumber) : `0${leftMinutesNumber}`
+      const msSeconds = msMinutes % (60 * 1000)
+      const leftSecondsNumber = Math.floor(msSeconds / 1000)
+      const leftSeconds = leftSecondsNumber > 9 ? String(leftSecondsNumber) : `0${leftSecondsNumber}`
+      
+      setLeftTime({
+        diff,
+        leftDays,
+        leftHours,
+        leftMinutes,
+        leftSeconds,
+      })
+    }, [])
+
+    React.useEffect(() => {
+      setInterval(() => {
+        updateLeftTime()
+      }, 1000)
+    }, [updateLeftTime])
+
     return (
       <>
         {eventData ? (
@@ -202,6 +256,18 @@ export const TradeRacePage = withTranslation("common")(
               ({eventData.duration.timeZone})
               {/*Activity Period: 2021/12/23 0:00 AM to 2021/12/30 0:00 AM (UTC)*/}
             </Typography>
+            { diff >= 0 && (
+              <>
+                <Typography marginTop={9} variant={'h4'}>{t('labelTradeRaceCountdown')}:</Typography>
+              <Typography fontSize={38} lineHeight={'46px'} marginTop={2} marginBottom={9}>
+                {leftDays}<TimeBoxStyled component={'span'}>D&nbsp;&nbsp;</TimeBoxStyled>
+                {leftHours}<TimeBoxStyled component={'span'}>H&nbsp;&nbsp;</TimeBoxStyled>
+                {leftMinutes}<TimeBoxStyled component={'span'}>M&nbsp;&nbsp;</TimeBoxStyled>
+                {leftSeconds}<TimeBoxStyled component={'span'}>S&nbsp;&nbsp;</TimeBoxStyled>
+              </Typography>
+              </>
+            ) }
+            
             <TableWrapperStyled>
               <SelectWrapperStyled textAlign={"right"}>
                 <StyledTextFiled
